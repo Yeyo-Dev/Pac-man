@@ -1,3 +1,15 @@
+/*
+ Proyecto: Pac-Man con caracteres
+ Equipo 2  Horario: 8:00-9:00hrs.
+ Integrantes del equipo:
+    --Diaz Cruz Esteban David
+    --Echeverria Valencia Greta ALitzel
+    --Gomez Almazan Martín
+    --Serafín Velazquez Andrea Lizeth
+    --Torres Gallardo Angel Gabriel
+    --Vargas Hernandez Luis Abraham
+*/
+
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
@@ -17,11 +29,31 @@ const int filas = 15; //filas del tablero
 const int columnas = 15; //columnas del tablero
 char tablero[filas][columnas]; //Tablero
 int posX_Pacman, posY_Pacman; //Posicion de pacman
+int posX_Pastilla, posY_Pastilla; //Posicion de la pastilla
 int posX_Fantasma, posY_Fantasma;//Posicion de fantasma
+bool s_pastilla = false; //Está bandera la usaremos para saber si pacman se comió la pastilla
+int cont_pastilla = 0;
+/*
+P = Pacman
+. = bolitas para comer
+F = Fantasma
+# = Pared
+o = Superpastilla
+*/
+
 
 #ifdef _WIN32
 void inicializarConsola() {
     // No se necesita inicializar nada en Windows
+}
+void detenerConsola() {
+    // No se necesita detener nada en Windows
+}
+
+//Para moverse con la pura letra sin tener que estar apretando enter a cada rato
+char obtenerEntrada() {
+    // Obtener entrada de teclado en sistemas Windows
+    return _getch();
 }
 #else
 void inicializarConsola() {
@@ -33,13 +65,6 @@ void inicializarConsola() {
     //Profe esto lo vimos en un tutorial de youtube porque nos salían errores, le entendimos más o menos poco
 }
 
-#endif
-
-#ifdef _WIN32
-void detenerConsola() {
-    // No se necesita detener nada en Windows
-}
-#else
 void detenerConsola() {
     // Restaurar la configuración de la terminal en sistemas Linux (Linux, macOS)
     struct termios t; // Estructura para configuración de la terminal
@@ -49,96 +74,6 @@ void detenerConsola() {
     //Profe esto lo vimos en un tutorial de youtube porque nos salían errores, le entendimos más o menos poco
 }
 
-#endif
-
-void inicializarTablero() {
-    // Inicializar el tablero y las posiciones de Pacman y el Fantasma
-
-    // Llenar el tablero con puntos (representados por '.')
-    for (int i = 0; i < filas; ++i) {
-        for (int j = 0; j < columnas; ++j) {
-            tablero[i][j] = '.';
-        }
-    }
-
-    // Colocar a Pacman en el centro del tablero
-    posX_Pacman = filas / 2;
-    posY_Pacman = columnas / 2;
-    tablero[posX_Pacman][posY_Pacman] = 'P';
-
-    // Generar posiciones aleatorias para el Fantasma
-    srand(time(nullptr)); //semilla para numeros aleatorios
-    posX_Fantasma = rand() % filas;
-    posY_Fantasma = rand() % columnas;
-    tablero[posX_Fantasma][posY_Fantasma] = 'F';
-}
-
-
-void imprimirTablero() {
-    // Limpiar la pantalla y mostrar el tablero con colores
-    system("cls || clear"); // Limpiar la pantalla en Windows o sistemas Linux
-    //Imprimimos el tablero según lo que contenga el elemento de la matriz
-    for (int i = 0; i < filas; ++i) {
-        for (int j = 0; j < columnas; ++j) {
-            if (tablero[i][j] == 'P') {
-                cout << "\x1B[33m" << "P" << "\x1B[0m "; // Amarillo para Pacman
-            } else if (tablero[i][j] == 'F') {
-                cout << "\x1B[31m" << "F" << "\x1B[0m "; // Rojo para el fantasma
-            } else {
-                cout << "\x1B[37m" << tablero[i][j] << "\x1B[0m "; // Blanco para el resto
-            }
-        }
-        cout << endl;
-    }
-}
-
-void moverPacman(char direccion) {
-    // Mover a Pacman y actualizar el puntaje
-    tablero[posX_Pacman][posY_Pacman] = ' ';
-    // La posicion la sacamos de esta manera para que en caso de que este en el borde y quiera avanzar más se teletransporte al otro lado
-    if (direccion == 'w') {
-        posX_Pacman = (posX_Pacman - 1 + filas) % filas;
-    } else if (direccion == 's') {
-        posX_Pacman = (posX_Pacman + 1) % filas;
-    } else if (direccion == 'a') {
-        posY_Pacman = (posY_Pacman - 1 + columnas) % columnas;
-    } else if (direccion == 'd') {
-        posY_Pacman = (posY_Pacman + 1) % columnas;
-    }
-    //Cuando pacman se come un punto, su puntaje aumenta
-    if (tablero[posX_Pacman][posY_Pacman] == '.'){
-        puntaje++;
-    }
-    //Ponemos a pacman en la matriz tablero
-    tablero[posX_Pacman][posY_Pacman] = 'P';
-}
-
-void moverFantasma() {
-    // Mover al Fantasma aleatoriamente
-    tablero[posX_Fantasma][posY_Fantasma] = prevfantasma;
-    int direccion = rand() % 4; //sacamos un numero aleatorio para que sea la direccion
-    // La posicion la sacamos de esta manera para que en caso de que este en el borde y quiera avanzar más se teletransporte al otro lado
-    if (direccion == 0) {
-        posX_Fantasma = (posX_Fantasma - 1 + filas) % filas;
-    } else if (direccion == 1) {
-        posX_Fantasma = (posX_Fantasma + 1) % filas;
-    } else if (direccion == 2) {
-        posY_Fantasma = (posY_Fantasma - 1 + columnas) % columnas;
-    } else if (direccion == 3) {
-        posY_Fantasma = (posY_Fantasma + 1) % columnas;
-    }
-
-    prevfantasma = tablero[posX_Fantasma][posY_Fantasma];//Para que si había un punto aunque el fantasma pase por encima se mantenga
-    tablero[posX_Fantasma][posY_Fantasma] = 'F';//Ponemos al fantasma en el tablero
-}
-
-#ifdef _WIN32
-//Para moverse con la pura letra sin tener que estar apretando enter a cada rato
-char obtenerEntrada() {
-    // Obtener entrada de teclado en sistemas Windows
-    return _getch();
-}
-#else
 //Para moverse con la pura letra sin tener que estar apretando enter a cada rato
 char obtenerEntrada() {
     // Obtener entrada de teclado en sistemas Linux (Linux, macOS)
@@ -174,6 +109,99 @@ char obtenerEntrada() {
 
 #endif
 
+void inicializarTablero() {
+    // Inicializar el tablero y las posiciones de Pacman y el Fantasma
+
+    // Llenar el tablero con puntos (representados por '.')
+    for (int i = 0; i < filas; ++i) {
+        for (int j = 0; j < columnas; ++j) {
+            tablero[i][j] = '.';
+        }
+    }
+
+    // Colocar a Pacman en el centro del tablero
+    posX_Pacman = filas / 2;
+    posY_Pacman = columnas / 2;
+    tablero[posX_Pacman][posY_Pacman] = 'P';
+
+    // Generar posiciones aleatorias para el Fantasma
+    srand(time(nullptr)); //semilla para numeros aleatorios
+    posX_Fantasma = rand() % filas;
+    posY_Fantasma = rand() % columnas;
+    tablero[posX_Fantasma][posY_Fantasma] = 'F';
+
+    // Generar posiciones aleatorias para la pastilla
+    srand(time(nullptr) + 5 ); //semilla para numeros aleatorios
+    posX_Pastilla = rand() % filas;
+    posY_Pastilla = rand() % columnas;
+    tablero[posX_Pastilla][posY_Pastilla] = 'o';
+}
+
+void imprimirTablero() {
+    // Limpiar la pantalla y mostrar el tablero con colores
+    system("cls || clear"); // Limpiar la pantalla en Windows o sistemas Linux
+    //Imprimimos el tablero según lo que contenga el elemento de la matriz
+    for (int i = 0; i < filas; ++i) {
+        for (int j = 0; j < columnas; ++j) {
+            if (tablero[i][j] == 'P') {
+                cout << "\x1B[33m" << "P" << "\x1B[0m "; // Amarillo para Pacman
+            } else if (tablero[i][j] == 'F') {
+                if(!s_pastilla){
+                    cout << "\x1B[31m" << "F" << "\x1B[0m "; // Rojo para el fantasma
+                }else{
+                    cout << "\x1B[34m" << "F" << "\x1B[0m ";// Rojo para el fantasma que se pueden comer
+                }
+            } else {
+                cout << "\x1B[37m" << tablero[i][j] << "\x1B[0m "; // Blanco para el resto
+            }
+        }
+        cout << endl;
+    }
+}
+
+void moverPacman(char direccion) {
+    // Mover a Pacman y actualizar el puntaje
+    tablero[posX_Pacman][posY_Pacman] = ' ';
+    // La posicion la sacamos de esta manera para que en caso de que este en el borde y quiera avanzar más se teletransporte al otro lado
+    if (direccion == 'w') {
+        posX_Pacman = (posX_Pacman - 1 + filas) % filas;
+    } else if (direccion == 's') {
+        posX_Pacman = (posX_Pacman + 1) % filas;
+    } else if (direccion == 'a') {
+        posY_Pacman = (posY_Pacman - 1 + columnas) % columnas;
+    } else if (direccion == 'd') {
+        posY_Pacman = (posY_Pacman + 1) % columnas;
+    }
+    //Cuando pacman se come un punto, su puntaje aumenta
+    if (tablero[posX_Pacman][posY_Pacman] == '.'){
+        puntaje++;
+    }else if(tablero[posX_Pacman][posY_Pacman] == 'o'){
+        s_pastilla = true;
+        cont_pastilla = 10;
+    }
+    //Ponemos a pacman en la matriz tablero
+    tablero[posX_Pacman][posY_Pacman] = 'P';
+}
+
+void moverFantasma() {
+    // Mover al Fantasma aleatoriamente
+    tablero[posX_Fantasma][posY_Fantasma] = prevfantasma;
+    int direccion = rand() % 4; //sacamos un numero aleatorio para que sea la direccion
+    // La posicion la sacamos de esta manera para que en caso de que este en el borde y quiera avanzar más se teletransporte al otro lado
+    if (direccion == 0) {
+        posX_Fantasma = (posX_Fantasma - 1 + filas) % filas;
+    } else if (direccion == 1) {
+        posX_Fantasma = (posX_Fantasma + 1) % filas;
+    } else if (direccion == 2) {
+        posY_Fantasma = (posY_Fantasma - 1 + columnas) % columnas;
+    } else if (direccion == 3) {
+        posY_Fantasma = (posY_Fantasma + 1) % columnas;
+    }
+
+    prevfantasma = tablero[posX_Fantasma][posY_Fantasma];//Para que si había un punto aunque el fantasma pase por encima se mantenga
+    tablero[posX_Fantasma][posY_Fantasma] = 'F';//Ponemos al fantasma en el tablero
+}
+
 void juegoPerdido(){
     system("cls || clear");
     cout<<"  ____                         ___                 _ "<<endl;
@@ -183,8 +211,8 @@ void juegoPerdido(){
     cout<<" \\____|\\__,_|_| |_| |_|\\___|  \\___/  \\_/ \\___|_|  (_)"<<endl;
     cout << "Has sido atrapado por el fantasma. Juego terminado." << endl;
     cout << "Tu puntaje es: " << puntaje << endl;
-
 }
+
 int main() {
     // Inicialización del juego
     system("cls || clear");
@@ -207,6 +235,11 @@ int main() {
     
     // Bucle principal del juego
     while (true) {
+        if (cont_pastilla >0){
+            cont_pastilla--;
+        }else{
+            s_pastilla = false;
+        }
         if(puntaje >= (filas*columnas-1) ) {
             // Juego ganado
             system("cls || clear");
