@@ -24,8 +24,8 @@
 using namespace std;
 
 int puntaje = 0; //el puntaje
-const int filas = 5; //filas del tablero
-const int columnas = 5; //columnas del tablero
+const int filas = 10; //filas del tablero
+const int columnas = 10; //columnas del tablero
 char tablero[filas][columnas]; //Tablero
 int posX_Pacman, posY_Pacman; //Posicion de pacman
 int posX_Pastilla, posY_Pastilla; //Posicion de la pastilla
@@ -133,11 +133,13 @@ void inicializarTablero() {
         posY_Fantasma[i] = rand() % columnas + i;
         tablero[posX_Fantasma[i]][posY_Fantasma[i]] = 'F';
     }
-    // Generar posiciones aleatorias para la pastilla
-    srand(time(nullptr) + 5 ); //semilla para numeros aleatorios
-    posX_Pastilla = rand() % filas;
-    posY_Pastilla = rand() % columnas;
-    tablero[posX_Pastilla][posY_Pastilla] = 'o';
+    for(int i=0;i<=4;i++){
+        // Generar posiciones aleatorias para la pastilla
+        srand(time(nullptr) + 5 + i ); //semilla para numeros aleatorios
+        posX_Pastilla = rand() % filas;
+        posY_Pastilla = rand() % columnas;
+        tablero[posX_Pastilla][posY_Pastilla] = 'o';
+    }
 }
 
 void imprimirTablero() {
