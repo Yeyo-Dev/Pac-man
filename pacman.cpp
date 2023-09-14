@@ -279,7 +279,7 @@ int main() {
         }else{
             s_pastilla = false;
         }
-        if(puntaje >= (filas* - 1) ) {
+        if(puntaje >= (filas*columnas - 1) ) {
             // Juego ganado
             system("cls || clear");
             cout<<"__   __                                _ "<<endl;
