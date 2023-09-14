@@ -197,6 +197,7 @@ void moverFantasma() {
     // Mover al Fantasma aleatoriamente cantidad_fantasmas
     for(int i = 0; i<=cantidad_fantasmas-1;i++){
         if(fantasma_exist[i]){
+            int prevx = posX_Fantasma[i], prevy = posY_Fantasma[i];
             tablero[posX_Fantasma[i]][posY_Fantasma[i]] = prevfantasma[i];
             int direccion = rand() % 4; //sacamos un numero aleatorio para que sea la direccion
             // La posicion la sacamos de esta manera para que en caso de que este en el borde y quiera avanzar más se teletransporte al otro lado
@@ -210,6 +211,10 @@ void moverFantasma() {
                 posY_Fantasma[i] = (posY_Fantasma[i] + 1) % columnas;
             }
 
+            if(tablero[posX_Fantasma[i]][posY_Fantasma[i]] == '#'){//Cuando se topa con una pared no puede avanzar
+                posX_Fantasma[i] = prevx;
+                posY_Fantasma[i] = prevy;
+            }
             prevfantasma[i] = tablero[posX_Fantasma[i]][posY_Fantasma[i]];//Para que si había un punto aunque el fantasma pase por encima se mantenga
             tablero[posX_Fantasma[i]][posY_Fantasma[i]] = 'F';//Ponemos al fantasma en el tablero
         }else{
