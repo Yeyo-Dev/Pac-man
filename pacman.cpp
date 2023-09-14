@@ -29,12 +29,12 @@ const int columnas = 10; //columnas del tablero
 char tablero[filas][columnas]; //Tablero
 int posX_Pacman, posY_Pacman; //Posicion de pacman
 int posX_Pastilla, posY_Pastilla; //Posicion de la pastilla
-const int cantidad_fantasmas = 2;
+const int cantidad_fantasmas = 2; //La cantidad de fantasmas
 char prevfantasma[cantidad_fantasmas]; //es para ver si el fantasma esta sobre un punto o en un espacio en blanco
 int posX_Fantasma[cantidad_fantasmas], posY_Fantasma[cantidad_fantasmas];//Posicion de fantasma
 bool s_pastilla = false; //Está bandera la usaremos para saber si pacman se comió la pastilla
-int cont_pastilla = 0;
-bool fantasma_exist[cantidad_fantasmas];
+int cont_pastilla = 0; //El contador de turnos que dura el efecto de la pastilla
+bool fantasma_exist[cantidad_fantasmas]; // Para ver si el fantasma existe o ya fue comido
 /*
 P = Pacman
 . = bolitas para comer
@@ -133,12 +133,12 @@ void inicializarTablero() {
         posY_Fantasma[i] = rand() % columnas + i;
         tablero[posX_Fantasma[i]][posY_Fantasma[i]] = 'F';
     }
-    for(int i=0;i<=4;i++){
+    for(int i=0;i<4;i++){//Hacer 4 pastillas
         // Generar posiciones aleatorias para la pastilla
         srand(time(nullptr) + 5 + i ); //semilla para numeros aleatorios
         posX_Pastilla = rand() % filas;
         posY_Pastilla = rand() % columnas;
-        tablero[posX_Pastilla][posY_Pastilla] = 'o';
+        tablero[posX_Pastilla][posY_Pastilla] = 'o';//Ponemos la pastilla
     }
 }
 
@@ -151,7 +151,7 @@ void imprimirTablero() {
             if (tablero[i][j] == 'P') {
                 cout << "\x1B[33m" << "P" << "\x1B[0m "; // Amarillo para Pacman
             } else if (tablero[i][j] == 'F') {
-                if(!s_pastilla){
+                if(!s_pastilla){//Indica si la pastilla no ha sido comida
                     cout << "\x1B[31m" << "F" << "\x1B[0m "; // Rojo para el fantasma
                 }else{
                     cout << "\x1B[34m" << "F" << "\x1B[0m ";// Rojo para el fantasma que se pueden comer
@@ -166,26 +166,27 @@ void imprimirTablero() {
 
 void moverPacman(char direccion) {
     // Mover a Pacman y actualizar el puntaje
-    int prevx = posX_Pacman, prevy = posY_Pacman;
-    tablero[posX_Pacman][posY_Pacman] = ' ';
+    int prevx = posX_Pacman, prevy = posY_Pacman; //Declaramos dos variables prev como auxiliares de dónde estaba pacman
+    tablero[posX_Pacman][posY_Pacman] = ' '; //La posición en la que se encontraba pacman ahora estará vacia porque ya se comió el punto
     // La posicion la sacamos de esta manera para que en caso de que este en el borde y quiera avanzar más se teletransporte al otro lado
-    if (direccion == 'w') {
+    if (direccion == 'w' || direccion == 'W') {//Arriba
         posX_Pacman = (posX_Pacman - 1 + filas) % filas;
-    } else if (direccion == 's') {
+    } else if (direccion == 's'|| direccion == 'S') {//Abajo
         posX_Pacman = (posX_Pacman + 1) % filas;
-    } else if (direccion == 'a') {
+    } else if (direccion == 'a'|| direccion == 'A') {//Izquierda
         posY_Pacman = (posY_Pacman - 1 + columnas) % columnas;
-    } else if (direccion == 'd') {
+    } else if (direccion == 'd'|| direccion == 'D') {//Derecha
         posY_Pacman = (posY_Pacman + 1) % columnas;
     }
     //Cuando pacman se come un punto, su puntaje aumenta
     if (tablero[posX_Pacman][posY_Pacman] == '.'){
         puntaje++;
     }else if(tablero[posX_Pacman][posY_Pacman] == 'o'){ //Cuando pacman se topa con una pastilla ahora puede comer a los fantasmas
-        s_pastilla = true;
-        cont_pastilla = 10;
-        puntaje++;
+        s_pastilla = true;//activamos la bandera para poder comer a los fantasmas
+        cont_pastilla = 10;//Le damos 10 turnos para que se acabe el efecto
+        puntaje++;//Se le da puntaje
     }else if(tablero[posX_Pacman][posY_Pacman] == '#'){//Cuando pacman topa con una pared no puede avanzar
+        //En caso de que haya una pared regresa a la posición en la que estaba porque no la puede pasar
         posX_Pacman = prevx;
         posY_Pacman = prevy;
     }
@@ -197,7 +198,7 @@ void moverFantasma() {
     // Mover al Fantasma aleatoriamente cantidad_fantasmas
     for(int i = 0; i<=cantidad_fantasmas-1;i++){
         if(fantasma_exist[i]){
-            int prevx = posX_Fantasma[i], prevy = posY_Fantasma[i];
+            int prevx = posX_Fantasma[i], prevy = posY_Fantasma[i]; //Declaramos dos variables prev como auxiliares de dónde estaba
             tablero[posX_Fantasma[i]][posY_Fantasma[i]] = prevfantasma[i];
             int direccion = rand() % 4; //sacamos un numero aleatorio para que sea la direccion
             // La posicion la sacamos de esta manera para que en caso de que este en el borde y quiera avanzar más se teletransporte al otro lado
@@ -212,12 +213,14 @@ void moverFantasma() {
             }
 
             if(tablero[posX_Fantasma[i]][posY_Fantasma[i]] == '#'){//Cuando se topa con una pared no puede avanzar
+                //En caso de que haya una pared regresa a la posición en la que estaba porque no la puede pasar
                 posX_Fantasma[i] = prevx;
                 posY_Fantasma[i] = prevy;
             }
             prevfantasma[i] = tablero[posX_Fantasma[i]][posY_Fantasma[i]];//Para que si había un punto aunque el fantasma pase por encima se mantenga
             tablero[posX_Fantasma[i]][posY_Fantasma[i]] = 'F';//Ponemos al fantasma en el tablero
         }else{
+            //Si no existe lo sacamos del arreglo
             posX_Fantasma[i] = -1;   
             posY_Fantasma[i] = -1;
         }
@@ -225,6 +228,7 @@ void moverFantasma() {
 }
 
 void juegoPerdido(){
+    //Imprimimos un banner de que perdió el jugador y le decimos su puntaje
     system("cls || clear");
     cout<<"  ____                         ___                 _ "<<endl;
     cout<<" / ___| __ _ _ __ ___   ___   / _ \\__   _____ _ __| |"<<endl;
@@ -236,17 +240,20 @@ void juegoPerdido(){
 }
 
 bool pacmanColisionaFantasma (){
+    //Iteramos para todos los fantasmas que existen
     for(int i=0; i<=cantidad_fantasmas-1; i++){
+        //Si están en la misma posición
         if (posX_Pacman == posX_Fantasma[i] && posY_Pacman == posY_Fantasma[i]) {
-            if(!s_pastilla){
+            if(!s_pastilla){//Si no tiene el efecto de la pastilla
                 // Juego perdido
                 juegoPerdido();
                 return true;
                 break;
             }else if(s_pastilla && fantasma_exist[i]){
+                //Si pacman tiene el efecto de la pastilla y el fantasma existe entonces deja de existir
                 fantasma_exist[i] = false;
                 if(prevfantasma[i] == '.'){
-                    puntaje++;
+                    puntaje++;//Si había un punto dónde se comió al fantasma se come el punto también
                 }
             }
         }
@@ -256,6 +263,7 @@ bool pacmanColisionaFantasma (){
 
 int main() {
     for (int i=0;i<=cantidad_fantasmas-1;i++){
+        //Llenamos los arreglos con sus valores por defecto
         prevfantasma[i] = '.';
         fantasma_exist[i] = true;
     }
@@ -271,22 +279,25 @@ int main() {
         cout<<"| |                                     "<<endl;
         cout<<"|_|               "<<endl;
         cout<<"Presione cualquier tecla para iniciar..."<<endl;
+        //Para no usar más storage usamos la variable char que ya teníamos y sólamente la limpiamos después de usarla
+        //Esto para no tener que presionar enter
         char direccion = obtenerEntrada();
         direccion = ' ';
-    } catch (const std::exception &e) {
+    } catch (const std::exception &e) {//En ciertos casos que no reconoce los caracteres del banner retorna error
         std::cerr << "Se produjo una excepción: " << e.what() << std::endl;
     }
     inicializarTablero();
     imprimirTablero();
     
-    // Bucle principal del juego
+    // Bucle principal del juego (infinito)
     while (true) {
+        //Si tenemos el efecto de la pastilla le vamos quitando un turno
         if (cont_pastilla >0){
             cont_pastilla--;
         }else{
             s_pastilla = false;
         }
-        if(puntaje >= (filas*columnas - 1) ) {
+        if(puntaje >= (filas*columnas - 1) ) { //Aqui sacamos la cantidad de puntaje que necesita según los  puntos, que es los espacios de la matriz menos pacman menos las paredes
             // Juego ganado
             system("cls || clear");
             cout<<"__   __                                _ "<<endl;
@@ -296,20 +307,19 @@ int main() {
             cout<<"  |_|\\___/ \\__,_|   \\_/\\_/ \\___/|_| |_(_)"<<endl;
             break;
         }
-        char direccion = obtenerEntrada();
+        char direccion = obtenerEntrada();//Obtenemos la tecla presionada
         if (direccion == 'w' || direccion == 'a' || direccion == 's' || direccion == 'd' ||direccion == 'W' || direccion == 'A' || direccion == 'S' || direccion == 'D') {
-            moverPacman(direccion);
-            imprimirTablero();
+            moverPacman(direccion);//Movemos a pacman según la dirección
+            imprimirTablero();//Imprimimos el tablero otra vez y ponemos el puntaje que lleva
             cout << "Tu puntaje es: " << puntaje << endl;
-            if (pacmanColisionaFantasma()) {
+            if (pacmanColisionaFantasma()) {//Revisamos si hay colision
                 // Juego perdido
                 break;
             }
         }
-        moverFantasma();
-        imprimirTablero();
+        moverFantasma();//Movemos al fantasma
+        imprimirTablero();//Volvemos a imprimir el tablero
         cout << "Tu puntaje es: " << puntaje << endl;
-        //cout << "Fantasma: " << fantasma_exist[0] << endl;
 
         //El if indica si el fantasma y pacman estan en la misma posicion
          if (pacmanColisionaFantasma()) {
@@ -318,8 +328,8 @@ int main() {
             }
     }
 
-    detenerConsola();
-    char direccion = obtenerEntrada();
+    detenerConsola();//Detenemos consola
+    char direccion = obtenerEntrada();//Volvemos a que presione una tecla para terminar el programa
     direccion = ' ';
     return 0;
 }
