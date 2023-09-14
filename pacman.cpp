@@ -258,6 +258,7 @@ void moverFantasma() {
     // Mover al Fantasma aleatoriamente cantidad_fantasmas
     for(int i = 0; i<=cantidad_fantasmas-1;i++){
         if(fantasma_exist[i]){
+            char prev_fantasma2 = prevfantasma[i];
             int prevx = posX_Fantasma[i], prevy = posY_Fantasma[i]; //Declaramos dos variables prev como auxiliares de dónde estaba
             tablero[posX_Fantasma[i]][posY_Fantasma[i]] = prevfantasma[i];
             int direccion = rand() % 4; //sacamos un numero aleatorio para que sea la direccion
@@ -278,6 +279,10 @@ void moverFantasma() {
                 posY_Fantasma[i] = prevy;
             }
             prevfantasma[i] = tablero[posX_Fantasma[i]][posY_Fantasma[i]];//Para que si había un punto aunque el fantasma pase por encima se mantenga
+            //Soluciona el bug de que se multiplique la imagen de los fantasmas
+            if(prevfantasma[i] =='F'){
+                prevfantasma[i] = prev_fantasma2;
+            }
             tablero[posX_Fantasma[i]][posY_Fantasma[i]] = 'F';//Ponemos al fantasma en el tablero
         }else{
             //Si no existe lo sacamos del arreglo
@@ -338,6 +343,7 @@ int main() {
         cout<<"| .__/ \\__,_|\\___|_| |_| |_|\\__,_|_| |_|"<<endl;
         cout<<"| |                                     "<<endl;
         cout<<"|_|               "<<endl;
+        cout<<"Para jugar usa las teclas WASD";
         cout<<"Presione cualquier tecla para iniciar..."<<endl;
         //Para no usar más storage usamos la variable char que ya teníamos y sólamente la limpiamos después de usarla
         //Esto para no tener que presionar enter
@@ -357,7 +363,7 @@ int main() {
         }else{
             s_pastilla = false;
         }
-        if(puntaje >= (filas*columnas - 1 - 60) ) { //Aqui sacamos la cantidad de puntaje que necesita según los  puntos, que es los espacios de la matriz menos pacman menos las paredes
+        if(puntaje >= (filas*columnas - 190) ) { //Aqui sacamos la cantidad de puntaje que necesita según los  puntos, que es los espacios de la matriz menos pacman menos las paredes
             // Juego ganado
             system("cls || clear");
             cout<<"__   __                                _ "<<endl;
