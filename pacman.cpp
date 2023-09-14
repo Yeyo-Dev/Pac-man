@@ -53,8 +53,8 @@ char obtenerEntrada() {
     char ch;
     // Lee el carácter
     std::cin.get(ch);
-     // Simula presionar Enter
-    std::cin.putback('\n');
+    // Simula presionar Enter
+    //std::cin.putback('\n');
     return ch;
 }
 #endif
