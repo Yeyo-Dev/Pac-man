@@ -16,9 +16,6 @@
 
 #ifdef _WIN32
 #include <conio.h> // Para la función _getch() en sistemas Windows
-#else
-#include <termios.h> // Para la función getch() en sistemas Linux
-#include <unistd.h>
 #endif
 
 using namespace std;
@@ -45,70 +42,21 @@ o = Superpastilla
 
 
 #ifdef _WIN32
-void inicializarConsola() {
-    // No se necesita inicializar nada en Windows
-}
-void detenerConsola() {
-    // No se necesita detener nada en Windows
-}
-
 //Para moverse con la pura letra sin tener que estar apretando enter a cada rato
 char obtenerEntrada() {
     // Obtener entrada de teclado en sistemas Windows
-    return _getch();
+    return getch();
 }
 #else
-void inicializarConsola() {
-    // Configurar la terminal en sistemas Linux (Linux, macOS)
-    struct termios t; // Estructura para configuración de la terminal
-    tcgetattr(STDIN_FILENO, &t); // Obtener la configuración actual de la terminal
-    t.c_lflag &= ~ICANON; // Deshabilitar el modo canónico (entrada de línea)
-    tcsetattr(STDIN_FILENO, TCSANOW, &t); // Aplicar la configuración modificada a la terminal
-    //Profe esto lo vimos en un tutorial de youtube porque nos salían errores, le entendimos más o menos poco
-}
-
-void detenerConsola() {
-    // Restaurar la configuración de la terminal en sistemas Linux (Linux, macOS)
-    struct termios t; // Estructura para configuración de la terminal
-    tcgetattr(STDIN_FILENO, &t); // Obtener la configuración actual de la terminal
-    t.c_lflag |= ICANON; // Habilitar el modo canónico (entrada de línea)
-    tcsetattr(STDIN_FILENO, TCSANOW, &t); // Aplicar la configuración modificada a la terminal
-    //Profe esto lo vimos en un tutorial de youtube porque nos salían errores, le entendimos más o menos poco
-}
-
-//Para moverse con la pura letra sin tener que estar apretando enter a cada rato
 char obtenerEntrada() {
-    // Obtener entrada de teclado en sistemas Linux (Linux, macOS)
-    char buf = 0; // Variable para almacenar el carácter de entrada
-    struct termios old = {0}; // Estructura para la configuración original de la terminal
-    fflush(stdout); // Vaciar el búfer de salida
-    // Obtener y modificar la configuración actual de la terminal
-    if (tcgetattr(0, &old) < 0) {
-        perror("tcsetattr()");
-    }
-    // Deshabilitar el modo canónico y el eco de caracteres
-    old.c_lflag &= ~ICANON;
-    old.c_lflag &= ~ECHO;
-    // Configurar la lectura de un carácter sin esperar por "Enter"
-    old.c_cc[VMIN] = 1;
-    old.c_cc[VTIME] = 0;
-    // Aplicar la configuración modificada a la terminal
-    if (tcsetattr(0, TCSANOW, &old) < 0) {
-        perror("tcsetattr ICANON");
-    }
-    // Leer un carácter desde la entrada estándar
-    if (read(0, &buf, 1) < 0) {
-        perror("read()");
-    }
-    // Restaurar la configuración original de la terminal
-    old.c_lflag |= ICANON;
-    old.c_lflag |= ECHO;
-    if (tcsetattr(0, TCSADRAIN, &old) < 0) {
-        perror("tcsetattr ~ICANON");
-    }
-    return buf; // Devolver el carácter de entrada
+    // Obtener entrada de teclado
+    char ch;
+    // Lee el carácter
+    std::cin.get(ch);
+     // Simula presionar Enter
+    std::cin.putback('\n');
+    return ch;
 }
-
 #endif
 
 void inicializarTablero() {
@@ -335,7 +283,6 @@ int main() {
     
     // Inicialización del juego
     system("cls || clear");
-    inicializarConsola();
     try{
         cout<<" _ __   __ _  ___ _ __ ___   __ _ _ __  "<<endl;
         cout<<"| '_ \\ / _` |/ __| '_ ` _ \\ / _` | '_ \\ "<<endl;
@@ -386,6 +333,9 @@ int main() {
         moverFantasma();//Movemos al fantasma
         imprimirTablero();//Volvemos a imprimir el tablero
         cout << "Tu puntaje es: " << puntaje << endl;
+        if(cont_pastilla > 0) {//
+            cout << "Tienes " <<cont_pastilla << " turnos antes de que se termine el efecto" <<endl;
+        }
 
         //El if indica si el fantasma y pacman estan en la misma posicion
          if (pacmanColisionaFantasma()) {
@@ -393,8 +343,6 @@ int main() {
                 break;
             }
     }
-
-    detenerConsola();//Detenemos consola
     char direccion = obtenerEntrada();//Volvemos a que presione una tecla para terminar el programa
     direccion = ' ';
     return 0;
