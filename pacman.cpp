@@ -23,16 +23,18 @@
 
 using namespace std;
 
-char prevfantasma = '.'; //es para ver si el fantasma esta sobre un punto o en un espacio en blanco
 int puntaje = 0; //el puntaje
-const int filas = 15; //filas del tablero
-const int columnas = 15; //columnas del tablero
+const int filas = 5; //filas del tablero
+const int columnas = 5; //columnas del tablero
 char tablero[filas][columnas]; //Tablero
 int posX_Pacman, posY_Pacman; //Posicion de pacman
 int posX_Pastilla, posY_Pastilla; //Posicion de la pastilla
-int posX_Fantasma, posY_Fantasma;//Posicion de fantasma
+const int cantidad_fantasmas = 1;
+char prevfantasma[cantidad_fantasmas]; //es para ver si el fantasma esta sobre un punto o en un espacio en blanco
+int posX_Fantasma[cantidad_fantasmas], posY_Fantasma[cantidad_fantasmas];//Posicion de fantasma
 bool s_pastilla = false; //Está bandera la usaremos para saber si pacman se comió la pastilla
 int cont_pastilla = 0;
+bool fantasma_exist[cantidad_fantasmas];
 /*
 P = Pacman
 . = bolitas para comer
@@ -126,10 +128,11 @@ void inicializarTablero() {
 
     // Generar posiciones aleatorias para el Fantasma
     srand(time(nullptr)); //semilla para numeros aleatorios
-    posX_Fantasma = rand() % filas;
-    posY_Fantasma = rand() % columnas;
-    tablero[posX_Fantasma][posY_Fantasma] = 'F';
-
+    for(int i = 0; i <= cantidad_fantasmas-1; i++){
+        posX_Fantasma[i] = rand() % filas + i;
+        posY_Fantasma[i] = rand() % columnas + i;
+        tablero[posX_Fantasma[i]][posY_Fantasma[i]] = 'F';
+    }
     // Generar posiciones aleatorias para la pastilla
     srand(time(nullptr) + 5 ); //semilla para numeros aleatorios
     posX_Pastilla = rand() % filas;
@@ -161,6 +164,7 @@ void imprimirTablero() {
 
 void moverPacman(char direccion) {
     // Mover a Pacman y actualizar el puntaje
+    int prevx = posX_Pacman, prevy = posY_Pacman;
     tablero[posX_Pacman][posY_Pacman] = ' ';
     // La posicion la sacamos de esta manera para que en caso de que este en el borde y quiera avanzar más se teletransporte al otro lado
     if (direccion == 'w') {
@@ -175,31 +179,41 @@ void moverPacman(char direccion) {
     //Cuando pacman se come un punto, su puntaje aumenta
     if (tablero[posX_Pacman][posY_Pacman] == '.'){
         puntaje++;
-    }else if(tablero[posX_Pacman][posY_Pacman] == 'o'){
+    }else if(tablero[posX_Pacman][posY_Pacman] == 'o'){ //Cuando pacman se topa con una pastilla ahora puede comer a los fantasmas
         s_pastilla = true;
         cont_pastilla = 10;
+    }else if(tablero[posX_Pacman][posY_Pacman] == '#'){//Cuando pacman topa con una pared no puede avanzar
+        posX_Pacman = prevx;
+        posY_Pacman = prevy;
     }
     //Ponemos a pacman en la matriz tablero
     tablero[posX_Pacman][posY_Pacman] = 'P';
 }
 
 void moverFantasma() {
-    // Mover al Fantasma aleatoriamente
-    tablero[posX_Fantasma][posY_Fantasma] = prevfantasma;
-    int direccion = rand() % 4; //sacamos un numero aleatorio para que sea la direccion
-    // La posicion la sacamos de esta manera para que en caso de que este en el borde y quiera avanzar más se teletransporte al otro lado
-    if (direccion == 0) {
-        posX_Fantasma = (posX_Fantasma - 1 + filas) % filas;
-    } else if (direccion == 1) {
-        posX_Fantasma = (posX_Fantasma + 1) % filas;
-    } else if (direccion == 2) {
-        posY_Fantasma = (posY_Fantasma - 1 + columnas) % columnas;
-    } else if (direccion == 3) {
-        posY_Fantasma = (posY_Fantasma + 1) % columnas;
-    }
+    // Mover al Fantasma aleatoriamente cantidad_fantasmas
+    for(int i = 0; i<=cantidad_fantasmas-1;i++){
+        if(fantasma_exist[i]){
+            tablero[posX_Fantasma[i]][posY_Fantasma[i]] = prevfantasma[i];
+            int direccion = rand() % 4; //sacamos un numero aleatorio para que sea la direccion
+            // La posicion la sacamos de esta manera para que en caso de que este en el borde y quiera avanzar más se teletransporte al otro lado
+            if (direccion == 0) {
+                posX_Fantasma[i] = (posX_Fantasma[i] - 1 + filas) % filas;
+            } else if (direccion == 1) {
+                posX_Fantasma[i] = (posX_Fantasma[i] + 1) % filas;
+            } else if (direccion == 2) {
+                posY_Fantasma[i] = (posY_Fantasma[i] - 1 + columnas) % columnas;
+            } else if (direccion == 3) {
+                posY_Fantasma[i] = (posY_Fantasma[i] + 1) % columnas;
+            }
 
-    prevfantasma = tablero[posX_Fantasma][posY_Fantasma];//Para que si había un punto aunque el fantasma pase por encima se mantenga
-    tablero[posX_Fantasma][posY_Fantasma] = 'F';//Ponemos al fantasma en el tablero
+            prevfantasma[i] = tablero[posX_Fantasma[i]][posY_Fantasma[i]];//Para que si había un punto aunque el fantasma pase por encima se mantenga
+            tablero[posX_Fantasma[i]][posY_Fantasma[i]] = 'F';//Ponemos al fantasma en el tablero
+        }else{
+            posX_Fantasma[i] = -1;   
+            posY_Fantasma[i] = -1;
+        }
+    }
 }
 
 void juegoPerdido(){
@@ -212,8 +226,30 @@ void juegoPerdido(){
     cout << "Has sido atrapado por el fantasma. Juego terminado." << endl;
     cout << "Tu puntaje es: " << puntaje << endl;
 }
+bool pacmanColisionaFantasma (){
+    for(int i=0; i<=cantidad_fantasmas-1; i++){
+        if (posX_Pacman == posX_Fantasma[i] && posY_Pacman == posY_Fantasma[i]) {
+            if(!s_pastilla)
+                // Juego perdido
+                juegoPerdido();
+                return true;
+                break;
+            }else if(s_pastilla){
+                if(fantasma_exist[i]){
+                    fantasma_exist[i] = false;
+                    puntaje++;
+                }
+            }
+    }
+    return false;
+}
 
 int main() {
+    for (int i=0;i<=cantidad_fantasmas-1;i++){
+        prevfantasma[i] = '.';
+        fantasma_exist[i] = true;
+    }
+    
     // Inicialización del juego
     system("cls || clear");
     inicializarConsola();
@@ -240,7 +276,7 @@ int main() {
         }else{
             s_pastilla = false;
         }
-        if(puntaje >= (filas*columnas-1) ) {
+        if(puntaje >= (filas*columnas-2) ) {
             // Juego ganado
             system("cls || clear");
             cout<<"__   __                                _ "<<endl;
@@ -255,9 +291,8 @@ int main() {
             moverPacman(direccion);
             imprimirTablero();
             cout << "Tu puntaje es: " << puntaje << endl;
-            if (posX_Pacman == posX_Fantasma && posY_Pacman == posY_Fantasma) {
+            if (pacmanColisionaFantasma()) {
                 // Juego perdido
-                juegoPerdido();
                 break;
             }
         }
@@ -265,11 +300,10 @@ int main() {
         imprimirTablero();
         cout << "Tu puntaje es: " << puntaje << endl;
         //El if indica si el fantasma y pacman estan en la misma posicion
-        if (posX_Pacman == posX_Fantasma && posY_Pacman == posY_Fantasma) {
-            // Juego perdido
-            juegoPerdido();
-            break;
-        }
+         if (pacmanColisionaFantasma()) {
+                // Juego perdido
+                break;
+            }
     }
 
     detenerConsola();
