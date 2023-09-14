@@ -29,7 +29,7 @@ const int columnas = 5; //columnas del tablero
 char tablero[filas][columnas]; //Tablero
 int posX_Pacman, posY_Pacman; //Posicion de pacman
 int posX_Pastilla, posY_Pastilla; //Posicion de la pastilla
-const int cantidad_fantasmas = 1;
+const int cantidad_fantasmas = 2;
 char prevfantasma[cantidad_fantasmas]; //es para ver si el fantasma esta sobre un punto o en un espacio en blanco
 int posX_Fantasma[cantidad_fantasmas], posY_Fantasma[cantidad_fantasmas];//Posicion de fantasma
 bool s_pastilla = false; //Está bandera la usaremos para saber si pacman se comió la pastilla
@@ -278,7 +278,7 @@ int main() {
         }else{
             s_pastilla = false;
         }
-        if(puntaje >= (filas*columnas-2) ) {
+        if(puntaje >= (filas*columnas-cantidad_fantasmas - 1) ) {
             // Juego ganado
             system("cls || clear");
             cout<<"__   __                                _ "<<endl;
@@ -311,6 +311,7 @@ int main() {
     }
 
     detenerConsola();
-
+    char direccion = obtenerEntrada();
+    direccion = ' ';
     return 0;
 }
