@@ -133,7 +133,7 @@ void inicializarTablero() {
         posY_Fantasma[i] = rand() % columnas + i;
         tablero[posX_Fantasma[i]][posY_Fantasma[i]] = 'F';
     }
-    for(int i=0;i<4;i++){//Hacer 4 pastillas
+    for(int i=0;i<8;i++){//Hacer varias pastillas
         // Generar posiciones aleatorias para la pastilla
         srand(time(nullptr) + 5 + i ); //semilla para numeros aleatorios
         posX_Pastilla = rand() % filas;
@@ -175,6 +175,29 @@ void inicializarTablero() {
     //Horizontal inferior
     tablero[12][1]='#'; tablero[12][2]='#'; tablero[12][3]='#'; tablero[12][4]='#'; tablero[12][5]='#'; tablero[12][6]='#'; tablero[12][7]='#'; tablero[12][8]='#'; tablero[12][9]='#'; tablero[12][10]='#'; tablero[12][11]='#'; tablero[12][12]='#';
     tablero[12][13]='#'; tablero[12][14]='#'; tablero[12][15]='.';tablero[12][16]='#'; tablero[12][17]='#'; tablero[12][18]='#'; tablero[12][19]='#'; tablero[12][20]='#'; tablero[12][21]='#'; tablero[12][22]='#'; tablero[12][23]='#'; tablero[12][24]='#'; tablero[12][25]='#'; tablero[12][26]='#';tablero[12][27]='#';tablero[12][28]='#';tablero[12][29]='#';tablero[12][30]='#';
+    //Letra E
+    tablero[4][2]='#';tablero[5][2]='#';tablero[6][2]='#';tablero[7][2]='#';tablero[8][2]='#';tablero[4][3]='#';tablero[4][4]='#';tablero[6][3]='#';tablero[6][4]='#';tablero[8][3]='#';tablero[8][4]='#';
+    
+    //Letra Q
+    tablero[4][6]='#';tablero[4][7]='#';tablero[4][8]='#';tablero[5][6]='#';/*tablero[6][6]='#'*/;tablero[7][6]='#';tablero[8][6]='#';tablero[5][8]='#';/*tablero[6][8]='#'*/;tablero[7][8]='#';tablero[8][8]='#';tablero[9][8]='#';tablero[10][8]='#';tablero[8][7]='#';//tablero[6][7]='*';tablero[7][7]='*';tablero[5][7]='*';
+    
+    //Letra u
+    tablero[4][10]='#';tablero[5][10]='#';tablero[6][10]='#';tablero[7][10]='#';tablero[8][10]='#';tablero[8][11]='#';tablero[8][12]='#';tablero[7][12]='#';tablero[6][12]='#';tablero[5][12]='#';tablero[4][12]='#';
+
+    //Letra i
+    tablero[4][14]='#';tablero[5][14]='#';tablero[6][14]='#';tablero[7][14]='#';tablero[8][14]='#';
+    
+    //Letra P
+    tablero[4][16]='#';/*tablero[5][16]='#'*/;tablero[6][16]='#';tablero[7][16]='#';tablero[8][16]='#';tablero[4][17]='#';tablero[6][17]='#';tablero[4][18]='#';tablero[5][18]='#';tablero[6][18]='#';
+    
+    //Letra O
+    /*tablero[4][20]='#';*/tablero[5][20]='#';/*tablero[6][20]='#'*/;tablero[7][20]='#';/*tablero[8][20]='#';*/tablero[8][21]='#';tablero[4][21]='#';/*tablero[4][22]='#';*/tablero[5][22]='#';/*tablero[6][22]='#'*/;tablero[7][22]='#';/*tablero[8][22]='#';*/
+    
+    //Numero II
+    tablero[4][24]='#';tablero[4][25]='#';/*tablero[4][26]='#'*/;tablero[4][27]='#';tablero[4][28]='#';tablero[5][25]='#';tablero[5][27]='#';tablero[6][25]='#';tablero[6][27]='#';tablero[7][25]='#';tablero[7][27]='#';tablero[8][24]='#';tablero[8][25]='#';/*tablero[8][26]='#'*/;tablero[8][27]='#';tablero[8][28]='#';
+    //Paredes externas a la frase
+    tablero[2][2]='#';tablero[2][3]='#';tablero[2][4]='#';tablero[2][6]='#';tablero[2][7]='#';tablero[2][8]='#';tablero[2][10]='#';tablero[2][11]='#';tablero[2][12]='#';tablero[2][14]='#';tablero[2][16]='#';tablero[2][17]='#';tablero[2][18]='#';tablero[2][20]='#';tablero[2][21]='#';tablero[2][22]='#';tablero[2][24]='#';tablero[2][25]='#';tablero[2][26]='#';tablero[2][27]='#';tablero[2][28]='#';
+    tablero[10][2]='#';tablero[10][3]='#';tablero[10][4]='#';tablero[10][5]='#';tablero[10][6]='#';tablero[10][10]='#';tablero[10][11]='#';tablero[10][12]='#';tablero[10][14]='#';tablero[10][16]='#';tablero[10][17]='#';tablero[10][18]='#';tablero[10][20]='#';tablero[10][21]='#';tablero[10][22]='#';tablero[10][24]='#';tablero[10][25]='#';tablero[10][26]='#';tablero[10][27]='#';tablero[10][28]='#';
 }
 
 void imprimirTablero() {
@@ -191,6 +214,8 @@ void imprimirTablero() {
                 }else{
                     cout << "\x1B[34m" << "F" << "\x1B[0m ";// Rojo para el fantasma que se pueden comer
                 }
+            } else if (tablero[i][j] == '#') {
+                cout << "\x1B[32m" << "#" << "\x1B[0m ";
             } else {
                 cout << "\x1B[37m" << tablero[i][j] << "\x1B[0m "; // Blanco para el resto
             }
@@ -332,7 +357,7 @@ int main() {
         }else{
             s_pastilla = false;
         }
-        if(puntaje >= (filas*columnas - 1) ) { //Aqui sacamos la cantidad de puntaje que necesita según los  puntos, que es los espacios de la matriz menos pacman menos las paredes
+        if(puntaje >= (filas*columnas - 1 - 60) ) { //Aqui sacamos la cantidad de puntaje que necesita según los  puntos, que es los espacios de la matriz menos pacman menos las paredes
             // Juego ganado
             system("cls || clear");
             cout<<"__   __                                _ "<<endl;
