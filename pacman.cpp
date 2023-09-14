@@ -182,6 +182,7 @@ void moverPacman(char direccion) {
     }else if(tablero[posX_Pacman][posY_Pacman] == 'o'){ //Cuando pacman se topa con una pastilla ahora puede comer a los fantasmas
         s_pastilla = true;
         cont_pastilla = 10;
+        puntaje++;
     }else if(tablero[posX_Pacman][posY_Pacman] == '#'){//Cuando pacman topa con una pared no puede avanzar
         posX_Pacman = prevx;
         posY_Pacman = prevy;
@@ -278,7 +279,7 @@ int main() {
         }else{
             s_pastilla = false;
         }
-        if(puntaje >= (filas*columnas-cantidad_fantasmas - 1) ) {
+        if(puntaje >= (filas* - 1) ) {
             // Juego ganado
             system("cls || clear");
             cout<<"__   __                                _ "<<endl;
