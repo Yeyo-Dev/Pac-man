@@ -343,7 +343,7 @@ int main() {
         cout<<"| .__/ \\__,_|\\___|_| |_| |_|\\__,_|_| |_|"<<endl;
         cout<<"| |                                     "<<endl;
         cout<<"|_|               "<<endl;
-        cout<<"Para jugar usa las teclas WASD";
+        cout<<"Para jugar usa las teclas WASD"<<endl;
         cout<<"Presione cualquier tecla para iniciar..."<<endl;
         //Para no usar más storage usamos la variable char que ya teníamos y sólamente la limpiamos después de usarla
         //Esto para no tener que presionar enter
