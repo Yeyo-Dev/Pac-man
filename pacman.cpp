@@ -24,8 +24,8 @@
 using namespace std;
 
 int puntaje = 0; //el puntaje
-const int filas = 10; //filas del tablero
-const int columnas = 10; //columnas del tablero
+const int filas = 13; //filas del tablero
+const int columnas = 31; //columnas del tablero
 char tablero[filas][columnas]; //Tablero
 int posX_Pacman, posY_Pacman; //Posicion de pacman
 int posX_Pastilla, posY_Pastilla; //Posicion de la pastilla
@@ -140,6 +140,41 @@ void inicializarTablero() {
         posY_Pastilla = rand() % columnas;
         tablero[posX_Pastilla][posY_Pastilla] = 'o';//Ponemos la pastilla
     }
+
+    //Vertical Derecho
+    tablero[0][30]='#';
+    tablero[1][30]='#';
+    tablero[2][30]='#';
+    tablero[3][30]='#';
+    tablero[4][30]='#';
+    tablero[5][30]='#'; 
+    tablero[6][30]='.'; 
+    tablero[7][30]='#'; 
+    tablero[8][30]='#'; 
+    tablero[9][30] = '#'; 
+    tablero[10][30] = '#'; 
+    tablero[11][30] = '#'; 
+    tablero[12][30] = '#';
+    //Vertical izquierdo
+    tablero[0][0]='#'; 
+    tablero[1][0]='#'; 
+    tablero[2][0]='#'; 
+    tablero[3][0]='#'; 
+    tablero[4][0]='#'; 
+    tablero[5][0]='#'; 
+    tablero[6][0]='.'; 
+    tablero[7][0]='#'; 
+    tablero[8][0]='#'; 
+    tablero[9][0] = '#'; 
+    tablero[10][0] = '#'; 
+    tablero[11][0] = '#'; 
+    tablero[12][0] = '#';
+    //Horizontal superior
+    tablero[0][1]='#'; tablero[0][2]='#'; tablero[0][3]='#'; tablero[0][4]='#'; tablero[0][5]='#'; tablero[0][6]='#'; tablero[0][7]='#'; tablero[0][8]='#'; tablero[0][9]='#'; tablero[0][10]='#'; tablero[0][11]='#'; tablero[0][12]='#';
+    tablero[0][13]='#'; tablero[0][14]='#'; tablero[0][15]='.';tablero[0][16]='#'; tablero[0][17]='#'; tablero[0][18]='#'; tablero[0][19]='#'; tablero[0][20]='#'; tablero[0][21]='#'; tablero[0][22]='#'; tablero[0][23]='#'; tablero[0][24]='#'; tablero[0][25]='#'; tablero[0][26]='#';tablero[0][27]='#';tablero[0][28]='#';tablero[0][29]='#';tablero[0][30]='#';
+    //Horizontal inferior
+    tablero[12][1]='#'; tablero[12][2]='#'; tablero[12][3]='#'; tablero[12][4]='#'; tablero[12][5]='#'; tablero[12][6]='#'; tablero[12][7]='#'; tablero[12][8]='#'; tablero[12][9]='#'; tablero[12][10]='#'; tablero[12][11]='#'; tablero[12][12]='#';
+    tablero[12][13]='#'; tablero[12][14]='#'; tablero[12][15]='.';tablero[12][16]='#'; tablero[12][17]='#'; tablero[12][18]='#'; tablero[12][19]='#'; tablero[12][20]='#'; tablero[12][21]='#'; tablero[12][22]='#'; tablero[12][23]='#'; tablero[12][24]='#'; tablero[12][25]='#'; tablero[12][26]='#';tablero[12][27]='#';tablero[12][28]='#';tablero[12][29]='#';tablero[12][30]='#';
 }
 
 void imprimirTablero() {
