@@ -226,20 +226,22 @@ void juegoPerdido(){
     cout << "Has sido atrapado por el fantasma. Juego terminado." << endl;
     cout << "Tu puntaje es: " << puntaje << endl;
 }
+
 bool pacmanColisionaFantasma (){
     for(int i=0; i<=cantidad_fantasmas-1; i++){
         if (posX_Pacman == posX_Fantasma[i] && posY_Pacman == posY_Fantasma[i]) {
-            if(!s_pastilla)
+            if(!s_pastilla){
                 // Juego perdido
                 juegoPerdido();
                 return true;
                 break;
-            }else if(s_pastilla){
-                if(fantasma_exist[i]){
-                    fantasma_exist[i] = false;
+            }else if(s_pastilla && fantasma_exist[i]){
+                fantasma_exist[i] = false;
+                if(prevfantasma[i] == '.'){
                     puntaje++;
                 }
             }
+        }
     }
     return false;
 }
@@ -299,6 +301,8 @@ int main() {
         moverFantasma();
         imprimirTablero();
         cout << "Tu puntaje es: " << puntaje << endl;
+        //cout << "Fantasma: " << fantasma_exist[0] << endl;
+
         //El if indica si el fantasma y pacman estan en la misma posicion
          if (pacmanColisionaFantasma()) {
                 // Juego perdido
