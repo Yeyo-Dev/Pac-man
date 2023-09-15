@@ -85,7 +85,7 @@ void inicializarTablero() {
         posY_Pastilla = rand() % columnas;
         tablero[posX_Pastilla][posY_Pastilla] = 'o';//Ponemos la pastilla
     }
-
+    //Mapa
     //Vertical Derecho
     tablero[0][30]='#';
     tablero[1][30]='#';
@@ -160,7 +160,7 @@ void imprimirTablero() {
                     cout << "\x1B[34m" << "F" << "\x1B[0m ";// Rojo para el fantasma que se pueden comer
                 }
             } else if (tablero[i][j] == '#') {
-                cout << "\x1B[32m" << "#" << "\x1B[0m ";
+                cout << "\x1B[32m" << "#" << "\x1B[0m ";//Verde para las paredes
             } else {
                 cout << "\x1B[37m" << tablero[i][j] << "\x1B[0m "; // Blanco para el resto
             }
@@ -182,6 +182,19 @@ void moverPacman(char direccion) {
         posY_Pacman = (posY_Pacman - 1 + columnas) % columnas;
     } else if (direccion == 'd'|| direccion == 'D') {//Derecha
         posY_Pacman = (posY_Pacman + 1) % columnas;
+    }
+    if(direccion == 'r'){//reiniciamos el juego
+        for (int i=0;i<=cantidad_fantasmas-1;i++){
+        //Llenamos los arreglos con sus valores por defecto
+            prevfantasma[i] = '.';
+            fantasma_exist[i] = true;
+        }
+        inicializarTablero();
+        cont_pastilla == 0;
+        s_pastilla = true;
+    }else if(direccion == 'i'){//Modo invencible, no tiene gran funcionalidad sólo por diversión
+        s_pastilla = true;
+        cont_pastilla = 100;
     }
     //Cuando pacman se come un punto, su puntaje aumenta
     if (tablero[posX_Pacman][posY_Pacman] == '.'){
@@ -318,29 +331,29 @@ int main() {
             break;
         }
         char direccion = obtenerEntrada();//Obtenemos la tecla presionada
-        if (direccion == 'w' || direccion == 'a' || direccion == 's' || direccion == 'd' ||direccion == 'W' || direccion == 'A' || direccion == 'S' || direccion == 'D') {
+        if (direccion == 'w' || direccion == 'a' || direccion == 's' || direccion == 'd' ||direccion == 'W' || direccion == 'A' || direccion == 'S' || direccion == 'D' || direccion == 'r' || direccion == 'i') {
             moverPacman(direccion);//Movemos a pacman según la dirección
             imprimirTablero();//Imprimimos el tablero otra vez y ponemos el puntaje que lleva
             cout << "Tu puntaje es: " << puntaje << endl;
-            if (pacmanColisionaFantasma()) {//Revisamos si hay colision
+            if (pacmanColisionaFantasma()) {//Revisamos si hay colision si es verdadero significa que se comieron a pacman
                 // Juego perdido
-                break;
+                break;//Salimos del while
             }
         }
         moverFantasma();//Movemos al fantasma
         imprimirTablero();//Volvemos a imprimir el tablero
         cout << "Tu puntaje es: " << puntaje << endl;
-        if(cont_pastilla > 0) {//
+        if(cont_pastilla > 0) {//Si tenemos el efecto de la super pastilla mostramos los turnos que nos quedan
             cout << "Tienes " <<cont_pastilla << " turnos antes de que se termine el efecto" <<endl;
         }
 
         //El if indica si el fantasma y pacman estan en la misma posicion
-         if (pacmanColisionaFantasma()) {
+         if (pacmanColisionaFantasma()) {//Si es verdadero significa que se comieron a pacman
                 // Juego perdido
-                break;
+                break;//Salimos del while infinito
             }
     }
     char direccion = obtenerEntrada();//Volvemos a que presione una tecla para terminar el programa
-    direccion = ' ';
+    direccion = ' '; //Limpiamos la variable es que me da toc por el debuger
     return 0;
 }
