@@ -15,7 +15,7 @@
 #include <cstdlib>
 
 #ifdef _WIN32
-#include <conio.h> // Para la función _getch() en sistemas Windows
+#include <conio.h> // Para la función getch() en sistemas Windows
 #endif
 
 using namespace std;
@@ -49,12 +49,9 @@ char obtenerEntrada() {
 }
 #else
 char obtenerEntrada() {
-    // Obtener entrada de teclado
     char ch;
     // Lee el carácter
     std::cin.get(ch);
-    // Simula presionar Enter
-    //std::cin.putback('\n');
     return ch;
 }
 #endif
