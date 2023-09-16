@@ -3,7 +3,7 @@
  Equipo 2  Horario: 8:00-9:00hrs.
  Integrantes del equipo:
     --Diaz Cruz Esteban David
-    --Echeverria Valencia Greta ALitzel
+    --Echeverria Valencia Greta Alitzel
     --Gomez Almazan Martín
     --Serafín Velazquez Andrea Lizeth
     --Torres Gallardo Angel Gabriel
@@ -12,7 +12,6 @@
 
 #include <iostream>
 #include <ctime>
-#include <cstdlib>
 
 #ifdef _WIN32
 #include <conio.h> // Para la función getch() en sistemas Windows
@@ -51,7 +50,7 @@ char obtenerEntrada() {
 char obtenerEntrada() {
     char ch;
     // Lee el carácter
-    std::cin.get(ch);
+    cin.get(ch);
     return ch;
 }
 #endif
