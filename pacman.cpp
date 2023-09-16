@@ -71,13 +71,6 @@ void inicializarTablero() {
     posY_Pacman = columnas / 2;
     tablero[posX_Pacman][posY_Pacman] = 'P';
 
-    // Generar posiciones aleatorias para el Fantasma
-    srand(time(nullptr)); //semilla para numeros aleatorios
-    for(int i = 0; i <= cantidad_fantasmas-1; i++){
-        posX_Fantasma[i] = rand() % filas + i;
-        posY_Fantasma[i] = rand() % columnas + i;
-        tablero[posX_Fantasma[i]][posY_Fantasma[i]] = 'F';
-    }
     for(int i=0;i<8;i++){//Hacer varias pastillas
         // Generar posiciones aleatorias para la pastilla
         srand(time(nullptr) + 5 + i ); //semilla para numeros aleatorios
@@ -143,6 +136,18 @@ void inicializarTablero() {
     //Paredes externas a la frase
     tablero[2][2]='#';tablero[2][3]='#';tablero[2][4]='#';tablero[2][6]='#';tablero[2][7]='#';tablero[2][8]='#';tablero[2][10]='#';tablero[2][11]='#';tablero[2][12]='#';tablero[2][14]='#';tablero[2][16]='#';tablero[2][17]='#';tablero[2][18]='#';tablero[2][20]='#';tablero[2][21]='#';tablero[2][22]='#';tablero[2][24]='#';tablero[2][25]='#';tablero[2][26]='#';tablero[2][27]='#';tablero[2][28]='#';
     tablero[10][2]='#';tablero[10][3]='#';tablero[10][4]='#';tablero[10][5]='#';tablero[10][6]='#';tablero[10][10]='#';tablero[10][11]='#';tablero[10][12]='#';tablero[10][14]='#';tablero[10][16]='#';tablero[10][17]='#';tablero[10][18]='#';tablero[10][20]='#';tablero[10][21]='#';tablero[10][22]='#';tablero[10][24]='#';tablero[10][25]='#';tablero[10][26]='#';tablero[10][27]='#';tablero[10][28]='#';
+
+    // Generar posiciones aleatorias para el Fantasma
+    srand(time(nullptr)); //semilla para numeros aleatorios
+    for(int i = 0; i <= cantidad_fantasmas-1; i++){
+        do{
+            posX_Fantasma[i] = rand() % filas + i;
+            posY_Fantasma[i] = rand() % columnas + i;
+            prevfantasma[i] = tablero[posX_Fantasma[i]][posY_Fantasma[i]];//Vemos qué está debajo del fantasma, puede ser .,#,o o Pacman
+        }while(prevfantasma[i] == '#' || prevfantasma[i] == 'P');//Es para que el fantasma no aparezca sobre una pared o sobre el Pacman
+        tablero[posX_Fantasma[i]][posY_Fantasma[i]] = 'F';
+        fantasma_exist[i] = true;
+    }
 }
 
 void imprimirTablero() {
@@ -184,14 +189,11 @@ void moverPacman(char direccion) {
         posY_Pacman = (posY_Pacman + 1) % columnas;
     }
     if(direccion == 'r'){//reiniciamos el juego
-        for (int i=0;i<=cantidad_fantasmas-1;i++){
-        //Llenamos los arreglos con sus valores por defecto
-            prevfantasma[i] = '.';
-            fantasma_exist[i] = true;
-        }
+        //Iniciamos valores por defecto
         inicializarTablero();
         cont_pastilla == 0;
         s_pastilla = true;
+        puntaje = 0;//Reinciamos el puntaje
     }else if(direccion == 'i'){//Modo invencible, no tiene gran funcionalidad sólo por diversión
         s_pastilla = true;
         cont_pastilla = 100;
@@ -285,12 +287,6 @@ bool pacmanColisionaFantasma (){
 }
 
 int main() {
-    for (int i=0;i<=cantidad_fantasmas-1;i++){
-        //Llenamos los arreglos con sus valores por defecto
-        prevfantasma[i] = '.';
-        fantasma_exist[i] = true;
-    }
-    
     // Inicialización del juego
     system("cls || clear");
     try{
